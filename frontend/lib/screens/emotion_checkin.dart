@@ -1,144 +1,105 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-
-class EmotionCheckInScreen extends StatefulWidget {
-  const EmotionCheckInScreen({super.key});
+class EmotionCheckinScreen extends StatefulWidget {
+  const EmotionCheckinScreen({Key? key}) : super(key: key);
 
   @override
-  State<EmotionCheckInScreen> createState() => _EmotionCheckInScreenState();
+  State<EmotionCheckinScreen> createState() => _EmotionCheckinScreenState();
 }
 
-class _EmotionCheckInScreenState extends State<EmotionCheckInScreen> {
-  final List<Map<String, dynamic>> moods = [
+class _EmotionCheckinScreenState extends State<EmotionCheckinScreen> {
+  String? selectedMood;
+
+  final List<Map<String, String>> moods = [
     {'emoji': '😊', 'label': 'Happy'},
     {'emoji': '😔', 'label': 'Sad'},
     {'emoji': '😡', 'label': 'Angry'},
-    {'emoji': '😰', 'label': 'Anxious'},
+    {'emoji': '😱', 'label': 'Anxious'},
     {'emoji': '😴', 'label': 'Tired'},
-    {'emoji': '🤩', 'label': 'Excited'},
-    {'emoji': '😕', 'label': 'Confused'},
-    {'emoji': '😌', 'label': 'Calm'},
+    {'emoji': '😐', 'label': 'Neutral'},
   ];
 
-  int? selectedIndex;
-  final TextEditingController _noteController = TextEditingController();
+  void submitMood() {
+    if (selectedMood != null) {
+      // TODO: Save to backend or state
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Mood "$selectedMood" submitted')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff4f4f4),
+      backgroundColor: const Color(0xFFF0F4F8),
       appBar: AppBar(
-        title: const Text("How are you feeling?"),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: GoogleFonts.poppins(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: Colors.black,
-        ),
+        title: const Text("How are you feeling today?"),
+        backgroundColor: Colors.teal,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            GridView.builder(
-              shrinkWrap: true,
-              itemCount: moods.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 4,
-                childAspectRatio: 0.8,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-              itemBuilder: (_, index) {
-                final mood = moods[index];
-                final isSelected = selectedIndex == index;
+            Wrap(
+              spacing: 16,
+              runSpacing: 16,
+              children: moods.map((mood) {
+                final isSelected = selectedMood == mood['label'];
                 return GestureDetector(
                   onTap: () {
                     setState(() {
-                      selectedIndex = index;
+                      selectedMood = mood['label'];
                     });
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
-                    padding: const EdgeInsets.all(12),
+                    duration: const Duration(milliseconds: 250),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.deepPurple[100] : Colors.white,
+                      color: isSelected ? Colors.teal : Colors.white,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isSelected ? Colors.deepPurple : Colors.grey[300]!,
-                        width: 2,
-                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: const Offset(2, 4),
+                        ),
+                      ],
+                      border: Border.all(color: Colors.tealAccent.shade100),
                     ),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          mood['emoji'],
-                          style: const TextStyle(fontSize: 32),
+                          mood['emoji']!,
+                          style: const TextStyle(fontSize: 30),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          mood['label'],
-                          style: GoogleFonts.poppins(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
+                          mood['label']!,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black87,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
                     ),
                   ),
                 );
-              },
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _noteController,
-              decoration: InputDecoration(
-                hintText: "Want to add a note?",
-                filled: true,
-                fillColor: Colors.white,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              maxLines: 3,
+              }).toList(),
             ),
             const Spacer(),
             ElevatedButton(
-              onPressed: selectedIndex == null
-                  ? null
-                  : () {
-                      final selectedMood = moods[selectedIndex!]['label'];
-                      final note = _noteController.text.trim();
-                      print("Selected mood: $selectedMood\nNote: $note");
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Thanks for checking in 💜"),
-                          backgroundColor: Colors.deepPurple,
-                        ),
-                      );
-
-                      setState(() {
-                        selectedIndex = null;
-                        _noteController.clear();
-                      });
-                    },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.deepPurple,
-                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                backgroundColor: Colors.teal,
+                minimumSize: const Size(double.infinity, 50),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
-              child: Text(
+              onPressed: submitMood,
+              child: const Text(
                 "Submit",
-                style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(fontSize: 18),
               ),
             ),
           ],
