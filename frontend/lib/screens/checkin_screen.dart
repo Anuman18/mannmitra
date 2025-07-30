@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../services/api_service.dart';
+
 
 class CheckInScreen extends StatefulWidget {
   const CheckInScreen({super.key});
@@ -45,7 +47,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
           SizedBox(height: 40),
           ElevatedButton(
             onPressed: () {
-              // TODO: Send mood to backend
+              ApiService.submitMood(selectedMood);
             },
             child: Text("Submit"),
           )
