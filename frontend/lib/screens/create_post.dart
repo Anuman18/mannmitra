@@ -9,23 +9,20 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _controller = TextEditingController();
-  String error = '';
 
-  void submitPost() {
-    if (_controller.text.trim().isEmpty) {
-      setState(() {
-        error = "Please write something before posting.";
-      });
+  void _submitPost() {
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please write something before posting")),
+      );
       return;
     }
 
-    // Here you would send the post to your backend or local DB
-    print("Anonymous Post: ${_controller.text}");
-
+    // For now, just show confirmation. Later, this should push to a shared state or DB.
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Post submitted anonymously 💬")),
+      const SnackBar(content: Text("Your anonymous post has been shared!")),
     );
-
     Navigator.pop(context); // Go back to feed
   }
 
@@ -33,7 +30,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Write Anonymously"),
+        title: const Text("Create Anonymous Post"),
         backgroundColor: Colors.deepPurple.shade400,
         foregroundColor: Colors.white,
       ),
@@ -42,15 +39,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         child: Column(
           children: [
             const Text(
-              "What’s on your mind?",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+              "Share your thoughts anonymously.\nYour identity is safe here.",
+              style: TextStyle(fontSize: 16, color: Colors.black54),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             TextField(
               controller: _controller,
               maxLines: 8,
               decoration: InputDecoration(
-                hintText: "Share your thoughts anonymously...",
+                hintText: "Write what's on your mind...",
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -58,19 +56,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
               ),
             ),
-            if (error.isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text(error, style: const TextStyle(color: Colors.red)),
-            ],
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: submitPost,
+            ElevatedButton.icon(
+              onPressed: _submitPost,
+              icon: const Icon(Icons.send),
+              label: const Text("Post Anonymously"),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.deepPurple.shade400,
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                foregroundColor: Colors.white,
+                minimumSize: const Size.fromHeight(50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
-              child: const Text("Post", style: TextStyle(fontSize: 16)),
             )
           ],
         ),

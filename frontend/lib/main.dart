@@ -23,7 +23,7 @@ class MentalHealthApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => const EmotionCheckInScreen(),
+        '/checkin': (context) => const EmotionCheckInScreen(),
         '/ai_chat': (context) => const AIChatScreen(),
         '/feed': (context) => SupportFeedScreen(),
         '/create-post': (context) => const CreatePostScreen(),
