@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'screens/checkin_screen.dart';
+import 'screens/emotion_checkin.dart';
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    home: CheckInScreen(),
+    home: EmotionCheckInScreen(),
   ));
 }
