@@ -1,17 +1,9 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+# Add these at the top
+from database.database import Base, engine
+from routers import mood_router
 
-app = FastAPI()
+# Create DB
+Base.metadata.create_all(bind=engine)
 
-# CORS setup for Flutter
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-@app.get("/")
-def read_root():
-    return {"message": "MannMitra backend running"}
+# Add router
+app.include_router(mood_router.router)
